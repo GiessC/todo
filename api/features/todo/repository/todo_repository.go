@@ -21,13 +21,13 @@ func NewTodoRepository(tableName string, db *dynamo.DB) *TodoRepository {
 	}
 }
 
-func (repository *TodoRepository) Save(todoItem *domain.Todo) *domain.Todo {
+func (repository *TodoRepository) Save(todoItem *domain.Todo) (*domain.Todo, error) {
 	fmt.Printf("Saving todo item %+v\n", todoItem)
 	table := repository.db.Table(repository.tableName)
 	err := table.Put(todoItem).Run(context.TODO())
 	if err != nil {
 		log.Printf("Error saving todo item: %v", err)
-		return nil
+		return nil, err
 	}
-	return todoItem
+	return todoItem, nil
 }

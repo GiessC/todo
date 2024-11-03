@@ -4,6 +4,7 @@ import (
 	"api/features/todo/dto"
 	"api/features/todo/service"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,15 +15,22 @@ func CreateTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 		err := c.Bind(&reqBody)
 		fmt.Printf("reqBody: %+v\n", reqBody)
 		if err != nil {
-			c.JSON(400, gin.H{
+			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "Invalid request body",
 			})
 			return
 		}
 
-		todoItem := service.Save(reqBody)
+		todoItem, err := service.Save(reqBody)
 
-		c.JSON(200, gin.H{
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Failed to save todo item.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
 			"todoItem": todoItem,
 		})
 	}

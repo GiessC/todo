@@ -16,6 +16,6 @@ func NewTodoService(repository *repository.TodoRepository) *TodoService {
 	}
 }
 
-func (service *TodoService) Save(createTodoDto dto.CreateTodoDto) *domain.Todo {
+func (service *TodoService) Save(createTodoDto dto.CreateTodoDto) (*domain.Todo, error) {
 	return service.repository.Save(createTodoDto.ToTodo())
 }
