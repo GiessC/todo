@@ -1,8 +1,8 @@
 package service
 
 import (
-	"api/features/todo/domain"
 	"api/features/todo/dto"
+	"api/features/todo/mapping"
 	"api/features/todo/repository"
 )
 
@@ -16,6 +16,10 @@ func NewTodoService(repository *repository.TodoRepository) *TodoService {
 	}
 }
 
-func (service *TodoService) Save(createTodoDto dto.CreateTodoDto) (*domain.Todo, error) {
-	return service.repository.Save(createTodoDto.ToTodo())
+func (service *TodoService) Save(createTodoDto dto.CreateTodoDto) (*dto.TodoDto, error) {
+	todo, err := service.repository.Save(mapping.CreateTodoDtoToDomain(&createTodoDto))
+	if err != nil {
+		return nil, err
+	}
+	return mapping.ToTodoDto(todo), nil
 }
