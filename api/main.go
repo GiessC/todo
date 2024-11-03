@@ -34,7 +34,7 @@ func main() {
 	repository := repository.NewTodoRepository(appConfig.TodoTableName, db)
 	service := service.NewTodoService(repository)
 
-	r := gin.Default()
-	r.POST(routes.Todo, todo.CreateTodoItemHandler(service))
-	r.Run(":8080")
+	router := gin.Default()
+	router.POST(routes.Todo, todo.CreateTodoItemHandler(service))
+	router.Run(":8080")
 }
