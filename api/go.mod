@@ -7,6 +7,7 @@ require github.com/aws/aws-sdk-go-v2/config v1.28.1
 require (
 	github.com/aws/aws-sdk-go v1.48.10 // indirect
 	github.com/caarlos0/env/v11 v11.2.2 // indirect
+	github.com/gin-contrib/cors v1.7.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 )
 
