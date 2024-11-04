@@ -13,7 +13,7 @@ type Todo struct {
 	TodoId      string `dynamo:"todoId"`
 	Label       string `dynamo:"label"`
 	IsCompleted bool   `dynamo:"isCompleted"`
-	CreatorId   string `dynamo:"creatorId"`
+	UserId      string `dynamo:"userId"`
 	CreatedAt   string `dynamo:"createdAt"`
 }
 
