@@ -31,7 +31,7 @@ func CreateTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusCreated, gin.H{
-			"todoItem": todoItem,
+			"item": todoItem,
 		})
 	}
 }

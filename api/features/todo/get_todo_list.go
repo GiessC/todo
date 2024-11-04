@@ -30,7 +30,7 @@ func GetTodoListHandler(service *service.TodoService) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"todoList": todoList,
+			"items": todoList,
 		})
 	}
 }
