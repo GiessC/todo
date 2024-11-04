@@ -1,7 +1,12 @@
-import TodoItem from '@/domain/TodoItem';
+import TodoItem, { TodoItemJSON } from '@/domain/TodoItem';
 import BaseError from '@/errors/BaseError';
 import { apiUrl } from '@/utils/api';
 import { StatusCodes } from 'http-status-codes';
+
+type CreateTodoResponse = {
+    todoItem?: TodoItemJSON;
+    error?: string;
+};
 
 export default class TodoService {
     static async create(label: string): Promise<TodoItem> {
@@ -16,12 +21,16 @@ export default class TodoService {
             },
             body: JSON.stringify(request),
         });
-        const jsonResponse = await response.json();
-        if (response.status !== StatusCodes.CREATED) {
+        const jsonResponse: CreateTodoResponse = await response.json();
+        if (
+            !jsonResponse?.todoItem ||
+            'error' in jsonResponse ||
+            response.status !== StatusCodes.CREATED
+        ) {
             throw new BaseError(
                 jsonResponse.error ?? 'Failed to create todo item.',
             );
         }
-        return jsonResponse;
+        return TodoItem.fromJSON(jsonResponse.todoItem);
     }
 }
