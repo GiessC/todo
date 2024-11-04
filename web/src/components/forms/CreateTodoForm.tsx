@@ -1,4 +1,3 @@
-import { useForm } from 'react-hook-form';
 import {
     Form,
     FormControl,
@@ -7,25 +6,14 @@ import {
     FormLabel,
     FormMessage,
 } from '../ui/form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '../ui/input';
-import Button from '../common/button/Button';
 import TodoService from '@/services/TodoService';
 import TodoItem from '@/domain/TodoItem';
 import BaseError from '@/errors/BaseError';
 import { useToast } from '@/hooks/use-toast';
 import { ToastActionElement } from '../ui/toast';
-
-const formSchema = z.object({
-    label: z.string().min(1, { message: 'Please specify a label.' }),
-});
-
-export type CreateTodoValues = z.infer<typeof formSchema>;
-
-const DEFAULT_VALUES: CreateTodoValues = {
-    label: '',
-};
+import { CreateTodoValues } from '../dialog/CreateTodoDialog';
+import { useFormContext } from 'react-hook-form';
 
 export interface CreateTodoFormProps {
     id: string;
@@ -34,13 +22,8 @@ export interface CreateTodoFormProps {
 }
 
 const CreateTodoForm = ({ id, onSuccess, onError }: CreateTodoFormProps) => {
+    const form = useFormContext<CreateTodoValues>();
     const { toast } = useToast();
-    const form = useForm<CreateTodoValues>({
-        resolver: zodResolver(formSchema),
-        defaultValues: DEFAULT_VALUES,
-    });
-    const { formState } = form;
-    const { isSubmitting } = formState;
 
     async function onSubmit(values: CreateTodoValues) {
         try {
@@ -91,13 +74,6 @@ const CreateTodoForm = ({ id, onSuccess, onError }: CreateTodoFormProps) => {
                         </FormItem>
                     )}
                 />
-                <Button
-                    type='submit'
-                    disabled={isSubmitting}
-                    isLoading={isSubmitting}
-                >
-                    Create
-                </Button>
             </form>
         </Form>
     );
