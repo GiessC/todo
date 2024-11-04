@@ -1,16 +1,16 @@
 export interface TodoItemJSON {
-    id: number;
+    id: string;
     label: string;
     completed: boolean;
 }
 
 export default class TodoItem {
-    private _id: number;
+    private _id: string;
     private _label: string;
     private _completed: boolean;
 
     constructor() {
-        this._id = 0;
+        this._id = '';
         this._label = '';
         this._completed = false;
     }
@@ -23,7 +23,15 @@ export default class TodoItem {
         return todo;
     }
 
+    get id(): string {
+        return this._id;
+    }
+
     get label(): string {
         return this._label;
+    }
+
+    get completed(): boolean {
+        return this._completed;
     }
 }
