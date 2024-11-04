@@ -8,13 +8,13 @@ import (
 )
 
 type Todo struct {
-	Pk          string `dynamo:"pk"`
-	Sk          string `dynamo:"sk"`
-	TodoId      string `dynamo:"todoId"`
-	Label       string `dynamo:"label"`
-	IsCompleted bool   `dynamo:"isCompleted"`
-	UserId      string `dynamo:"userId"`
-	CreatedAt   string `dynamo:"createdAt"`
+	Pk          string `dynamodbav:"pk"`
+	Sk          string `dynamodbav:"sk"`
+	TodoId      string `dynamodbav:"todoId"`
+	Label       string `dynamodbav:"label"`
+	IsCompleted bool   `dynamodbav:"isCompleted"`
+	UserId      string `dynamodbav:"userId"`
+	CreatedAt   string `dynamodbav:"createdAt"`
 }
 
 type TodoOption func(*Todo)
@@ -36,12 +36,14 @@ func WithCreatedAt(createdAt string) TodoOption {
 func NewTodo(label string, isCompleted bool, options ...TodoOption) *Todo {
 	todoId := uuid.NewString()
 	createdAt := util.CurrentIsoString()
+	userId := "1"
 	todoItem := &Todo{
-		Pk:          getPk("1", isCompleted),
+		Pk:          GetPk(userId, isCompleted),
 		Sk:          getSk(createdAt, todoId),
 		TodoId:      todoId,
 		Label:       label,
 		IsCompleted: isCompleted,
+		UserId:      userId,
 		CreatedAt:   createdAt,
 	}
 	for _, option := range options {
@@ -50,7 +52,7 @@ func NewTodo(label string, isCompleted bool, options ...TodoOption) *Todo {
 	return todoItem
 }
 
-func getPk(userId string, isCompleted bool) string {
+func GetPk(userId string, isCompleted bool) string {
 	return fmt.Sprintf("USER#%s#TODO#COMPLETED#%t", userId, isCompleted)
 }
 

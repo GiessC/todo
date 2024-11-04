@@ -23,3 +23,22 @@ func (service *TodoService) Save(createTodoDto dto.CreateTodoDto) (*dto.TodoDto,
 	}
 	return mapping.ToTodoDto(todo), nil
 }
+
+func (service *TodoService) FindAllByUser(userId string) ([]dto.TodoDto, error) {
+	completeTodoList, completeTodoListErr := service.repository.FindAllByUserAndCompleted(userId, true)
+	incompleteTodoList, incompleteTodoListErr := service.repository.FindAllByUserAndCompleted(userId, false)
+	if completeTodoListErr != nil {
+		return nil, completeTodoListErr
+	}
+	if incompleteTodoListErr != nil {
+		return nil, incompleteTodoListErr
+	}
+	todoDtoList := make([]dto.TodoDto, len(completeTodoList)+len(incompleteTodoList))
+	for i, todo := range completeTodoList {
+		todoDtoList[i] = *mapping.ToTodoDto(&todo)
+	}
+	for i, todo := range incompleteTodoList {
+		todoDtoList[i+len(completeTodoList)] = *mapping.ToTodoDto(&todo)
+	}
+	return todoDtoList, nil
+}
