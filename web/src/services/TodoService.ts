@@ -57,12 +57,12 @@ export default class TodoService {
 
     static async updateCompleted(
         id: string,
-        checked: boolean,
+        completed: boolean,
     ): Promise<TodoItem> {
         const response = await patch<ApiResponse<TodoItemJSON>>(
             `${Endpoints.TODO}/${id}`,
             {
-                checked,
+                completed,
             },
         );
         if (response?.status !== StatusCodes.NO_CONTENT) {
