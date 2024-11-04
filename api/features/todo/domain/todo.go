@@ -13,6 +13,7 @@ type Todo struct {
 	TodoId      string `dynamo:"todoId"`
 	Label       string `dynamo:"label"`
 	IsCompleted bool   `dynamo:"isCompleted"`
+	CreatorId   string `dynamo:"creatorId"`
 	CreatedAt   string `dynamo:"createdAt"`
 }
 
@@ -20,7 +21,7 @@ type TodoOption func(*Todo)
 
 func WithId(todoId string) TodoOption {
 	return func(todoItem *Todo) {
-		todoItem.Pk = getPk(todoItem.IsCompleted, todoId)
+		todoItem.Pk = getPk("1", todoItem.IsCompleted, todoId)
 		todoItem.TodoId = todoId
 	}
 }
@@ -36,7 +37,7 @@ func NewTodo(label string, isCompleted bool, options ...TodoOption) *Todo {
 	todoId := uuid.NewString()
 	createdAt := util.CurrentIsoString()
 	todoItem := &Todo{
-		Pk:          getPk(isCompleted, todoId),
+		Pk:          getPk("1", isCompleted, todoId),
 		Sk:          getSk(createdAt),
 		TodoId:      todoId,
 		Label:       label,
@@ -49,8 +50,8 @@ func NewTodo(label string, isCompleted bool, options ...TodoOption) *Todo {
 	return todoItem
 }
 
-func getPk(isCompleted bool, todoId string) string {
-	return fmt.Sprintf("TODO#COMPLETED#%t#%s", isCompleted, todoId)
+func getPk(userId string, isCompleted bool, todoId string) string {
+	return fmt.Sprintf("USER#%s#TODO#COMPLETED#%t#%s", userId, isCompleted, todoId)
 }
 
 func getSk(createdAt string) string {
