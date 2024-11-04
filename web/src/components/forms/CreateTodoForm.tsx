@@ -9,11 +9,10 @@ import {
 import { Input } from '../ui/input';
 import TodoService from '@/services/TodoService';
 import TodoItem from '@/domain/TodoItem';
-import BaseError from '@/errors/BaseError';
 import { useToast } from '@/hooks/use-toast';
-import { ToastActionElement } from '../ui/toast';
 import { CreateTodoValues } from '../dialog/CreateTodoDialog';
 import { useFormContext } from 'react-hook-form';
+import { toastError } from '@/utils/toastError';
 
 export interface CreateTodoFormProps {
     id: string;
@@ -36,18 +35,7 @@ const CreateTodoForm = ({ id, onSuccess, onError }: CreateTodoFormProps) => {
         } catch (error: unknown) {
             onError?.(error);
             console.error(error);
-            let description: string = 'An unknown error occurred.';
-            let action: ToastActionElement | undefined = undefined;
-            if (error instanceof BaseError) {
-                description = error.message;
-                action = error.action;
-            }
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description,
-                action,
-            });
+            toastError(error, 'To-do Creation Failed');
         }
     }
 
