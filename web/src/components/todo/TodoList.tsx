@@ -21,12 +21,17 @@ const TodoList = () => {
                 </CardHeader>
                 <CardContent>
                     <div className='flex flex-col space-y-2'>
-                        {data?.map((todo) => (
-                            <Todo
-                                key={todo.id}
-                                todo={todo}
-                            />
-                        ))}
+                        {isPending ? (
+                            <Loading className='w-12 h-12 text-gray-500 m-auto' />
+                        ) : (
+                            data?.map((todo) => (
+                                <Todo
+                                    key={todo.todoId}
+                                    todo={todo}
+                                />
+                            ))
+                        )}
+                        {isError && <div>Error: {error.message}</div>}
                     </div>
                 </CardContent>
             </Card>

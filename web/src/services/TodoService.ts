@@ -1,6 +1,9 @@
 import TodoItem, { TodoItemJSON } from '@/domain/TodoItem';
 import BaseError from '@/errors/BaseError';
-import { get, post } from '@/utils/fetch';
+import ServiceError from '@/errors/ServiceError';
+import Endpoints from '@/utils/Endpoints';
+import { get, patch, post } from '@/utils/fetch';
+import { StatusCodes } from 'http-status-codes';
 
 type CreateTodoResponse = {
     todoItem?: TodoItemJSON;
@@ -19,18 +22,46 @@ export default class TodoService {
             isCompleted: false,
         };
         const response = await post<CreateTodoResponse>('/todo', request);
-        if (!response?.todoItem || 'error' in response) {
-            throw new BaseError(response?.error ?? 'Failed to create todo.');
+        if (response?.status !== StatusCodes.CREATED) {
+            throw new ServiceError(
+                response?.error ?? 'Failed to create todo item.',
+                response?.status,
+            );
         }
-        return TodoItem.fromJSON(response.todoItem);
+        if (!response.body.todoItem) {
+            throw new BaseError('Failed to create todo item.');
+        }
+        return TodoItem.fromJSON(response.body.todoItem);
     }
 
     // TODO: userId is temporary and should be removed once authentication is implemented.
     static async getTodoList(userId: string = '1'): Promise<TodoItem[]> {
-        const response = await get<TodoListResponse>('/todo/all', { userId });
-        if (!response?.todoList || 'error' in response) {
-            throw new BaseError(response?.error ?? 'Failed to get todo list.');
+        const response = await get<TodoListResponse>(`${Endpoints.TODO}/all`, {
+            userId,
+        });
+        if (response?.status !== StatusCodes.OK) {
+            throw new ServiceError(
+                response?.error ?? 'Failed to fetch todo list.',
+                response?.status,
+            );
         }
-        return response.todoList.map((todoItem) => TodoItem.fromJSON(todoItem));
+        if (!response.body.todoList) {
+            throw new BaseError('Failed to fetch todo list.');
+        }
+        return response.body.todoList.map((todoItem) =>
+            TodoItem.fromJSON(todoItem),
+        );
+    }
+
+    static async updateCompleted(id: string, checked: boolean): Promise<void> {
+        const response = await patch(`${Endpoints.TODO}/${id}`, {
+            checked,
+        });
+        if (response?.status !== StatusCodes.NO_CONTENT) {
+            throw new ServiceError(
+                response?.error ?? 'Failed to update todo item.',
+                response?.status,
+            );
+        }
     }
 }
