@@ -25,8 +25,9 @@ export default class TodoService {
         return TodoItem.fromJSON(response.todoItem);
     }
 
-    static async getTodoList(): Promise<TodoItem[]> {
-        const response = await get<TodoListResponse>('/todo/all');
+    // TODO: userId is temporary and should be removed once authentication is implemented.
+    static async getTodoList(userId: string = '1'): Promise<TodoItem[]> {
+        const response = await get<TodoListResponse>('/todo/all', { userId });
         if (!response?.todoList || 'error' in response) {
             throw new BaseError(response?.error ?? 'Failed to get todo list.');
         }

@@ -12,6 +12,6 @@ const fakeUser: User = {
 export const useTodoList = () => {
     return useQuery({
         queryKey: ['todos', fakeUser.userId],
-        queryFn: TodoService.getTodoList,
+        queryFn: () => TodoService.getTodoList(fakeUser.userId),
     });
 };
