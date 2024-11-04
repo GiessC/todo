@@ -1,7 +1,12 @@
-import "./App.css";
+import './App.css';
+import CreateTodoDialog from './components/dialog/CreateTodoDialog';
 
 function App() {
-  return <>Test</>;
+    return (
+        <div className='h-screen w-screen'>
+            <CreateTodoDialog />
+        </div>
+    );
 }
 
 export default App;
