@@ -25,7 +25,11 @@ const DEFAULT_VALUES: CreateTodoValues = {
     label: '',
 };
 
-const CreateTodoDialog = () => {
+export interface CreateTodoDialogProps {
+    className?: string;
+}
+
+const CreateTodoDialog = ({ className }: CreateTodoDialogProps) => {
     const form = useForm<CreateTodoValues>({
         resolver: zodResolver(formSchema),
         defaultValues: DEFAULT_VALUES,
@@ -46,7 +50,7 @@ const CreateTodoDialog = () => {
                 open={isOpen}
                 onOpenChange={cleanup}
             >
-                <DialogTrigger>
+                <DialogTrigger className={`${className} w-min h-min`}>
                     <Button>
                         <Plus />
                     </Button>

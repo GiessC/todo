@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/caarlos0/env/v11"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/guregu/dynamo/v2"
 )
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 		log.Fatalf("unable to load SDK config, %v", err)
 		return
 	}
-	db := dynamo.New(dynamoConfig)
+	db := dynamodb.NewFromConfig(dynamoConfig)
 
 	repository := repository.NewTodoRepository(appConfig.TodoTableName, db)
 	service := service.NewTodoService(repository)
@@ -45,5 +45,6 @@ func main() {
 	}))
 
 	router.POST(routes.Todo, todo.CreateTodoItemHandler(service))
+	router.GET(routes.Todos, todo.GetTodoListHandler(service))
 	router.Run(":8080")
 }
