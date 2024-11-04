@@ -1,10 +1,14 @@
 import TodoItem, { TodoItemJSON } from '@/domain/TodoItem';
 import BaseError from '@/errors/BaseError';
-import { apiUrl } from '@/utils/api';
-import { StatusCodes } from 'http-status-codes';
+import { get, post } from '@/utils/fetch';
 
 type CreateTodoResponse = {
     todoItem?: TodoItemJSON;
+    error?: string;
+};
+
+type TodoListResponse = {
+    todoList?: TodoItemJSON[];
     error?: string;
 };
 
@@ -14,23 +18,18 @@ export default class TodoService {
             label,
             isCompleted: false,
         };
-        const response = await fetch(apiUrl('/todo'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(request),
-        });
-        const jsonResponse: CreateTodoResponse = await response.json();
-        if (
-            !jsonResponse?.todoItem ||
-            'error' in jsonResponse ||
-            response.status !== StatusCodes.CREATED
-        ) {
-            throw new BaseError(
-                jsonResponse.error ?? 'Failed to create todo item.',
-            );
+        const response = await post<CreateTodoResponse>('/todo', request);
+        if (!response?.todoItem || 'error' in response) {
+            throw new BaseError(response?.error ?? 'Failed to create todo.');
         }
-        return TodoItem.fromJSON(jsonResponse.todoItem);
+        return TodoItem.fromJSON(response.todoItem);
+    }
+
+    static async getTodoList(): Promise<TodoItem[]> {
+        const response = await get<TodoListResponse>('/todo/all');
+        if (!response?.todoList || 'error' in response) {
+            throw new BaseError(response?.error ?? 'Failed to get todo list.');
+        }
+        return response.todoList.map((todoItem) => TodoItem.fromJSON(todoItem));
     }
 }
