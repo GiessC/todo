@@ -47,5 +47,6 @@ func main() {
 	router.POST(routes.Todo, todo.CreateTodoItemHandler(service))
 	router.GET(routes.Todos, todo.GetTodoListHandler(service))
 	router.PATCH(routes.TodoItem, todo.UpdateTodoItemHandler(service))
+	router.DELETE(routes.TodoItem, todo.DeleteTodoItemHandler(service))
 	router.Run(":8080")
 }

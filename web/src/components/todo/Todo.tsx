@@ -3,6 +3,9 @@ import { Checkbox } from '../ui/checkbox';
 import IconButton from '../common/button/IconButton';
 import { Trash } from 'lucide-react';
 import TodoService from '@/services/TodoService';
+import { useDeleteTodo } from '@/hooks/useTodo';
+import { toast } from '@/hooks/use-toast';
+import { toastError } from '@/utils/toastError';
 
 export interface TodoProps {
     className?: string;
@@ -10,6 +13,8 @@ export interface TodoProps {
 }
 
 const Todo = ({ className = '', todo }: TodoProps) => {
+    const { mutateAsync: deleteTodoAsync } = useDeleteTodo();
+
     return (
         <div className={`${className} flex justify-between`}>
             <div className='flex items-center'>
@@ -32,6 +37,19 @@ const Todo = ({ className = '', todo }: TodoProps) => {
             <IconButton
                 className='w-4 bg-red-600'
                 icon={<Trash />}
+                onClick={() =>
+                    deleteTodoAsync(todo.todoId, {
+                        onSuccess: () => {
+                            toast({
+                                title: 'Todo deleted',
+                                description: `Successfully deleted to-do item with label "${todo.label}".`,
+                            });
+                        },
+                        onError: (error) => {
+                            toastError(error, 'Failed to delete to-do');
+                        },
+                    })
+                }
             />
         </div>
     );

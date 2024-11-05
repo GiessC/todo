@@ -14,7 +14,7 @@ function defaultHeaders(extensions?: Record<string, unknown>) {
     return headers;
 }
 
-export interface ApiResponse<TBody> {
+export interface FetchResponse<TBody> {
     status: number;
     message?: string;
     error?: string;
@@ -27,7 +27,7 @@ async function api<TBody>(
     params?: Record<string, string>,
     body?: unknown,
     headers?: Record<string, unknown>,
-): Promise<ApiResponse<TBody> | undefined> {
+): Promise<FetchResponse<TBody> | undefined> {
     const response = await fetch(
         apiUrl(endpoint, params ? `?${new URLSearchParams(params)}` : ''),
         {
@@ -49,7 +49,7 @@ export async function get<TResponse>(
     url: string,
     params?: Record<string, string>,
     headers?: Record<string, unknown>,
-): Promise<ApiResponse<TResponse> | undefined> {
+): Promise<FetchResponse<TResponse> | undefined> {
     return await api<TResponse>(url, 'GET', params, undefined, headers);
 }
 
@@ -57,7 +57,7 @@ export async function post<TResponse>(
     url: string,
     body?: Record<string, unknown>,
     headers?: Record<string, unknown>,
-): Promise<ApiResponse<TResponse> | undefined> {
+): Promise<FetchResponse<TResponse> | undefined> {
     return await api<TResponse>(url, 'POST', undefined, body, headers);
 }
 
@@ -65,7 +65,7 @@ export async function patch<TResponse>(
     url: string,
     body?: Record<string, unknown>,
     headers?: Record<string, unknown>,
-): Promise<ApiResponse<TResponse> | undefined> {
+): Promise<FetchResponse<TResponse> | undefined> {
     return await api<TResponse>(url, 'PATCH', undefined, body, headers);
 }
 
@@ -73,13 +73,13 @@ export async function put<TResponse>(
     url: string,
     body?: Record<string, string>,
     headers?: Record<string, unknown>,
-): Promise<ApiResponse<TResponse> | undefined> {
+): Promise<FetchResponse<TResponse> | undefined> {
     return await api<TResponse>(url, 'PUT', undefined, body, headers);
 }
 
 export async function del<TResponse>(
     url: string,
     headers?: Record<string, unknown>,
-): Promise<ApiResponse<TResponse> | undefined> {
+): Promise<FetchResponse<TResponse> | undefined> {
     return await api<TResponse>(url, 'DELETE', undefined, undefined, headers);
 }
