@@ -3,9 +3,22 @@ import Loading from '../common/loading/Loading';
 import Todo from './Todo';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import CreateTodoDialog from '../dialog/CreateTodoDialog';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Button } from '../ui/button';
+
+const Fallback = ({
+    resetErrorBoundary,
+}: {
+    resetErrorBoundary: () => void;
+}) => (
+    <>
+        <p>Something went wrong.</p>
+        <Button onClick={() => resetErrorBoundary()}>Reload</Button>
+    </>
+);
 
 const TodoList = () => {
-    const { data, error, isError, isPending } = useTodoList();
+    const { data, error, isError, isPending, refetch } = useTodoList();
 
     return (
         <div className='w-full h-full flex'>
@@ -18,17 +31,22 @@ const TodoList = () => {
                 </CardHeader>
                 <CardContent>
                     <div className='flex flex-col space-y-2'>
-                        {isPending ? (
-                            <Loading className='w-12 h-12 text-gray-500 m-auto' />
-                        ) : (
-                            data?.map((todo) => (
-                                <Todo
-                                    key={todo.todoId}
-                                    todo={todo}
-                                />
-                            ))
-                        )}
-                        {isError && <div>Error: {error.message}</div>}
+                        <ErrorBoundary
+                            fallbackRender={Fallback}
+                            onReset={() => refetch()}
+                        >
+                            {isPending ? (
+                                <Loading className='w-12 h-12 text-gray-500 m-auto' />
+                            ) : (
+                                data?.map((todo) => (
+                                    <Todo
+                                        key={todo.todoId}
+                                        todo={todo}
+                                    />
+                                ))
+                            )}
+                            {isError && <div>Error: {error.message}</div>}
+                        </ErrorBoundary>
                     </div>
                 </CardContent>
             </Card>
