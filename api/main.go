@@ -33,18 +33,19 @@ func main() {
 	}
 	db := dynamodb.NewFromConfig(dynamoConfig)
 
-	repository := repository.NewTodoRepository(appConfig.TodoTableName, db)
+	repository := repository.NewTodoRepository(appConfig.TodoTableName, appConfig.TodoGsi1IndexName, db)
 	service := service.NewTodoService(repository)
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
-		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE"},
+		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
 		AllowHeaders:    []string{"Origin"},
 		MaxAge:          12 * time.Hour,
 	}))
 
 	router.POST(routes.Todo, todo.CreateTodoItemHandler(service))
 	router.GET(routes.Todos, todo.GetTodoListHandler(service))
+	router.PATCH(routes.TodoItem, todo.UpdateTodoItemHandler(service))
 	router.Run(":8080")
 }

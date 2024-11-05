@@ -3,25 +3,25 @@ package todo
 import (
 	"api/features/todo/dto"
 	"api/features/todo/service"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CreateTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
+func UpdateTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var reqBody dto.CreateTodoDto
+		todoId := c.Param("todoId")
+		var reqBody dto.UpdateTodoDto
 		err := c.Bind(&reqBody)
-		fmt.Printf("reqBody: %+v\n", reqBody)
+
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "Invalid request body",
+				"error": "Invalid request body.",
 			})
 			return
 		}
 
-		todoItem, err := service.Save(reqBody)
+		todoItem, err := service.SetTodoCompleted(todoId, reqBody.Completed)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -30,7 +30,7 @@ func CreateTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"item": todoItem,
 		})
 	}

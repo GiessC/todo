@@ -1,37 +1,41 @@
 export interface TodoItemJSON {
-    id: string;
+    todoId: string;
     label: string;
-    completed: boolean;
+    isCompleted: boolean;
 }
 
 export default class TodoItem {
-    private _id: string;
+    private _todoId: string;
     private _label: string;
-    private _completed: boolean;
+    private _isCompleted: boolean;
 
     constructor() {
-        this._id = '';
+        this._todoId = '';
         this._label = '';
-        this._completed = false;
+        this._isCompleted = false;
     }
 
     static fromJSON(json: TodoItemJSON): TodoItem {
         const todo = new TodoItem();
-        todo._id = json.id;
+        todo._todoId = json.todoId;
         todo._label = json.label;
-        todo._completed = json.completed;
+        todo._isCompleted = json.isCompleted;
         return todo;
     }
 
-    get id(): string {
-        return this._id;
+    get todoId(): string {
+        return this._todoId;
     }
 
     get label(): string {
         return this._label;
     }
 
-    get completed(): boolean {
-        return this._completed;
+    get isCompleted(): boolean {
+        return this._isCompleted;
+    }
+
+    setCompleted(isCompleted: boolean) {
+        this._isCompleted = isCompleted;
     }
 }

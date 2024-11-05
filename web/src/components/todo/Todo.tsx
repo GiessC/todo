@@ -2,6 +2,7 @@ import TodoItem from '@/domain/TodoItem';
 import { Checkbox } from '../ui/checkbox';
 import IconButton from '../common/button/IconButton';
 import { Trash } from 'lucide-react';
+import TodoService from '@/services/TodoService';
 
 export interface TodoProps {
     className?: string;
@@ -12,9 +13,17 @@ const Todo = ({ className = '', todo }: TodoProps) => {
     return (
         <div className={`${className} flex justify-between`}>
             <div className='flex items-center'>
-                <Checkbox id={todo.id} />
+                <Checkbox
+                    id={todo.todoId}
+                    defaultChecked={todo.isCompleted}
+                    onCheckedChange={async (checked: boolean) => {
+                        todo.setCompleted(checked);
+                        await TodoService.updateCompleted(todo.todoId, checked);
+                    }}
+                    required
+                />
                 <label
-                    htmlFor={todo.id}
+                    htmlFor={todo.todoId}
                     className='ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                 >
                     {todo.label}

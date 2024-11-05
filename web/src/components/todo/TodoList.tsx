@@ -23,7 +23,7 @@ const TodoList = () => {
                         ) : (
                             data?.map((todo) => (
                                 <Todo
-                                    key={todo.id}
+                                    key={todo.todoId}
                                     todo={todo}
                                 />
                             ))
