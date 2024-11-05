@@ -16,16 +16,19 @@ export default class TodoService {
     static throwIfError(
         response: FetchResponse<ApiResponse<unknown>> | undefined,
         errorMessage: string,
-        expectedResponse: StatusCodes = StatusCodes.OK,
-        throwIfNoItem = true,
+        expectedResponse: number = StatusCodes.OK,
+        throwIfNoItem: boolean | undefined = undefined,
     ) {
+        if (!throwIfNoItem) {
+            throwIfNoItem = expectedResponse !== StatusCodes.NO_CONTENT;
+        }
         if (response?.status !== expectedResponse) {
             throw new ServiceError(
                 response?.error ?? errorMessage,
                 response?.status,
             );
         }
-        if (throwIfNoItem && !response.body.item) {
+        if (throwIfNoItem && !response.body) {
             throw new BaseError(errorMessage);
         }
     }
@@ -39,7 +42,7 @@ export default class TodoService {
             '/todo',
             request,
         );
-        this.throwIfError(
+        TodoService.throwIfError(
             response,
             'Failed to create to-do item.',
             StatusCodes.CREATED,
@@ -55,7 +58,7 @@ export default class TodoService {
                 userId,
             },
         );
-        this.throwIfError(
+        TodoService.throwIfError(
             response,
             'Failed to get to-do list.',
             StatusCodes.OK,
@@ -76,20 +79,15 @@ export default class TodoService {
                 completed,
             },
         );
-        this.throwIfError(
-            response,
-            'Failed to update to-do item.',
-            StatusCodes.NO_CONTENT,
-        );
+        TodoService.throwIfError(response, 'Failed to update to-do item.');
         return TodoItem.fromJSON(response!.body.item!);
     }
 
     static async deleteTodo(todoId: string): Promise<TodoItem> {
         const response = await del<ApiResponse<TodoItemJSON>>(
             `${Endpoints.TODO}/${todoId}`,
-            {},
         );
-        this.throwIfError(response, 'Failed to delete to-do item.');
+        TodoService.throwIfError(response, 'Failed to delete to-do item.');
         return TodoItem.fromJSON(response!.body.item!);
     }
 }
