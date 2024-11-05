@@ -42,3 +42,11 @@ func (service *TodoService) FindAllByUser(userId string) ([]dto.TodoDto, error) 
 	}
 	return todoDtoList, nil
 }
+
+func (service *TodoService) SetTodoCompleted(todoId string, completed bool) (*dto.TodoDto, error) {
+	todo, err := service.repository.SetTodoCompleted(todoId, completed)
+	if err != nil {
+		return nil, err
+	}
+	return mapping.ToTodoDto(todo), nil
+}
