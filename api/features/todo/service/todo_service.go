@@ -50,3 +50,11 @@ func (service *TodoService) SetTodoCompleted(todoId string, completed bool) (*dt
 	}
 	return mapping.ToTodoDto(todo), nil
 }
+
+func (service *TodoService) Delete(todoId string) (*dto.TodoDto, error) {
+	todo, err := service.repository.Delete(todoId)
+	if err != nil {
+		return nil, err
+	}
+	return mapping.ToTodoDto(todo), nil
+}

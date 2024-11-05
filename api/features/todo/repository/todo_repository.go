@@ -108,3 +108,27 @@ func (repository *TodoRepository) SetTodoCompleted(todoId string, completed bool
 	}
 	return todo, nil
 }
+
+func (repository *TodoRepository) Delete(todoId string) (*domain.Todo, error) {
+	output, err := repository.db.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+		TableName: &repository.tableName,
+		Key: map[string]types.AttributeValue{
+			"pk": &types.AttributeValueMemberS{Value: fmt.Sprintf("TODO#%s", todoId)},
+			"sk": &types.AttributeValueMemberS{Value: "TODO"},
+		},
+		ReturnValues: types.ReturnValueAllOld,
+	})
+
+	if err != nil {
+		log.Printf("Error deleting todo item: %v", err)
+		return nil, err
+	}
+
+	todo := &domain.Todo{}
+	err = attributevalue.UnmarshalMap(output.Attributes, todo)
+	if err != nil {
+		log.Printf("Error unmarshalling todo item: %v", err)
+		return nil, err
+	}
+	return todo, nil
+}
