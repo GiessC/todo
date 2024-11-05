@@ -7,12 +7,12 @@ import {
     FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
-import TodoService from '@/services/TodoService';
 import TodoItem from '@/domain/TodoItem';
 import { useToast } from '@/hooks/use-toast';
 import { CreateTodoValues } from '../dialog/CreateTodoDialog';
 import { useFormContext } from 'react-hook-form';
 import { toastError } from '@/utils/toastError';
+import { useCreateTodo } from '@/hooks/useTodo';
 
 export interface CreateTodoFormProps {
     id: string;
@@ -21,12 +21,13 @@ export interface CreateTodoFormProps {
 }
 
 const CreateTodoForm = ({ id, onSuccess, onError }: CreateTodoFormProps) => {
+    const { mutateAsync: createTodo } = useCreateTodo();
     const form = useFormContext<CreateTodoValues>();
     const { toast } = useToast();
 
     async function onSubmit(values: CreateTodoValues) {
         try {
-            const todo = await TodoService.create(values.label);
+            const todo = await createTodo(values.label);
             onSuccess(todo);
             toast({
                 title: 'Created to-do',

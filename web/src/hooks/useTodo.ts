@@ -16,9 +16,24 @@ export const useTodoList = () => {
     });
 };
 
+export const useCreateTodo = () => {
+    return useMutation({
+        mutationKey: ['create', 'todo'],
+        mutationFn: TodoService.create,
+    });
+};
+
+export const useUpdateTodo = (todoId: string) => {
+    return useMutation({
+        mutationKey: ['create', 'todo'],
+        mutationFn: (isCompleted: boolean) =>
+            TodoService.updateCompleted(todoId, isCompleted),
+    });
+};
+
 export const useDeleteTodo = () => {
     return useMutation({
         mutationKey: ['delete', 'todo'],
-        mutationFn: (todoId: string) => TodoService.deleteTodo(todoId),
+        mutationFn: TodoService.deleteTodo,
     });
 };

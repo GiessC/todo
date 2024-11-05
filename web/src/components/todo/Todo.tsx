@@ -2,8 +2,7 @@ import TodoItem from '@/domain/TodoItem';
 import { Checkbox } from '../ui/checkbox';
 import IconButton from '../common/button/IconButton';
 import { Trash } from 'lucide-react';
-import TodoService from '@/services/TodoService';
-import { useDeleteTodo } from '@/hooks/useTodo';
+import { useDeleteTodo, useUpdateTodo } from '@/hooks/useTodo';
 import { toast } from '@/hooks/use-toast';
 import { toastError } from '@/utils/toastError';
 
@@ -14,6 +13,16 @@ export interface TodoProps {
 
 const Todo = ({ className = '', todo }: TodoProps) => {
     const { mutateAsync: deleteTodoAsync } = useDeleteTodo();
+    const { mutateAsync: updateTodoAsync } = useUpdateTodo(todo.todoId);
+
+    const updateCompleted = async (isCompleted: boolean) => {
+        try {
+            await updateTodoAsync(isCompleted);
+        } catch (error: unknown) {
+            toastError(error, 'Failed to update to-do.');
+            todo.setCompleted(!isCompleted);
+        }
+    };
 
     return (
         <div className={`${className} flex justify-between`}>
@@ -23,7 +32,7 @@ const Todo = ({ className = '', todo }: TodoProps) => {
                     defaultChecked={todo.isCompleted}
                     onCheckedChange={async (checked: boolean) => {
                         todo.setCompleted(checked);
-                        await TodoService.updateCompleted(todo.todoId, checked);
+                        updateCompleted(checked);
                     }}
                     required
                 />
