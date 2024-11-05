@@ -1,5 +1,5 @@
 import TodoService from '@/services/TodoService';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 type User = {
     userId: string;
@@ -13,5 +13,12 @@ export const useTodoList = () => {
     return useQuery({
         queryKey: ['todos', fakeUser.userId],
         queryFn: () => TodoService.getTodoList(fakeUser.userId),
+    });
+};
+
+export const useDeleteTodo = () => {
+    return useMutation({
+        mutationKey: ['delete', 'todo'],
+        mutationFn: (todoId: string) => TodoService.deleteTodo(todoId),
     });
 };

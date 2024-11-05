@@ -2,8 +2,9 @@ import TodoItem, { TodoItemJSON } from '@/domain/TodoItem';
 import BaseError from '@/errors/BaseError';
 import ServiceError from '@/errors/ServiceError';
 import Endpoints from '@/utils/Endpoints';
-import { get, patch, post } from '@/utils/fetch';
+import { del, get, patch, post } from '@/utils/fetch';
 import { StatusCodes } from 'http-status-codes';
+import { FetchResponse } from '../utils/fetch';
 
 type ApiResponse<TEntity> = {
     item?: TEntity;
@@ -12,6 +13,23 @@ type ApiResponse<TEntity> = {
 };
 
 export default class TodoService {
+    static throwIfError(
+        response: FetchResponse<ApiResponse<unknown>> | undefined,
+        errorMessage: string,
+        expectedResponse: StatusCodes = StatusCodes.OK,
+        throwIfNoItem = true,
+    ) {
+        if (response?.status !== expectedResponse) {
+            throw new ServiceError(
+                response?.error ?? errorMessage,
+                response?.status,
+            );
+        }
+        if (throwIfNoItem && !response.body.item) {
+            throw new BaseError(errorMessage);
+        }
+    }
+
     static async create(label: string): Promise<TodoItem> {
         const request = {
             label,
@@ -21,16 +39,12 @@ export default class TodoService {
             '/todo',
             request,
         );
-        if (response?.status !== StatusCodes.CREATED) {
-            throw new ServiceError(
-                response?.error ?? 'Failed to create todo item.',
-                response?.status,
-            );
-        }
-        if (!response.body.item) {
-            throw new BaseError('Failed to create todo item.');
-        }
-        return TodoItem.fromJSON(response.body.item);
+        this.throwIfError(
+            response,
+            'Failed to create to-do item.',
+            StatusCodes.CREATED,
+        );
+        return TodoItem.fromJSON(response!.body.item!);
     }
 
     // TODO: userId is temporary and should be removed once authentication is implemented.
@@ -41,16 +55,13 @@ export default class TodoService {
                 userId,
             },
         );
-        if (response?.status !== StatusCodes.OK) {
-            throw new ServiceError(
-                response?.error ?? 'Failed to fetch todo list.',
-                response?.status,
-            );
-        }
-        if (!response.body.items) {
-            throw new BaseError('Failed to fetch todo list.');
-        }
-        return response.body.items.map((todoItem) =>
+        this.throwIfError(
+            response,
+            'Failed to get to-do list.',
+            StatusCodes.OK,
+            false,
+        );
+        return response!.body.items!.map((todoItem) =>
             TodoItem.fromJSON(todoItem),
         );
     }
@@ -65,15 +76,20 @@ export default class TodoService {
                 completed,
             },
         );
-        if (response?.status !== StatusCodes.NO_CONTENT) {
-            throw new ServiceError(
-                response?.error ?? 'Failed to update todo item.',
-                response?.status,
-            );
-        }
-        if (!response.body.item) {
-            throw new BaseError('Failed to update todo item.');
-        }
-        return TodoItem.fromJSON(response.body.item);
+        this.throwIfError(
+            response,
+            'Failed to update to-do item.',
+            StatusCodes.NO_CONTENT,
+        );
+        return TodoItem.fromJSON(response!.body.item!);
+    }
+
+    static async deleteTodo(todoId: string): Promise<TodoItem> {
+        const response = await del<ApiResponse<TodoItemJSON>>(
+            `${Endpoints.TODO}/${todoId}`,
+            {},
+        );
+        this.throwIfError(response, 'Failed to delete to-do item.');
+        return TodoItem.fromJSON(response!.body.item!);
     }
 }
