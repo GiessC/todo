@@ -17,7 +17,11 @@ const IGNORE_STATUS: Set<number> = new Set([
 ]);
 
 const retry = (failureCount: number, error: Error): boolean => {
-    if (error instanceof ServiceError && error.status in IGNORE_STATUS)
+    if (
+        error instanceof ServiceError &&
+        error.status &&
+        error.status in IGNORE_STATUS
+    )
         return false;
 
     if (failureCount > 3) return false;
