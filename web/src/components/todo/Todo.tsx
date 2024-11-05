@@ -15,6 +15,7 @@ const Todo = ({ className = '', todo }: TodoProps) => {
             <div className='flex items-center'>
                 <Checkbox
                     id={todo.todoId}
+                    defaultChecked={todo.isCompleted}
                     onCheckedChange={async (checked: boolean) => {
                         todo.setCompleted(checked);
                         await TodoService.updateCompleted(todo.todoId, checked);
