@@ -7,9 +7,6 @@ import CreateTodoDialog from '../dialog/CreateTodoDialog';
 const TodoList = () => {
     const { data, error, isError, isPending } = useTodoList();
 
-    if (isPending) return <Loading />;
-    if (isError) return <div>Error: {error.message}</div>;
-
     return (
         <div className='w-full h-full flex'>
             <Card className='relative p-4 flex flex-col w-1/5 h-fit m-auto'>
