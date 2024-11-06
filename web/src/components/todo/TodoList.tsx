@@ -56,7 +56,7 @@ const TodoList = () => {
 
     return (
         <div className='w-full h-full flex'>
-            <Card className='relative p-4 flex flex-col w-1/5 h-fit m-auto'>
+            <Card className='relative p-4 flex flex-col h-fit m-auto w-4/5 md:w-3/5 xl:w-1/3'>
                 <CreateTodoDialog
                     className='absolute top-2 right-2'
                     onSuccess={(todo: TodoItem) =>
