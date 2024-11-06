@@ -4,6 +4,7 @@ import (
 	"api/exceptions"
 	"api/features/todo/domain"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -123,8 +124,9 @@ func (repository *TodoRepository) Delete(todoId string) (*domain.Todo, error) {
 	})
 
 	if err != nil {
-		if _, ok := err.(*types.ConditionalCheckFailedException); ok {
-			return nil, exceptions.NewBadRequestException(fmt.Sprintf("Todo item with ID %s does not exist.", todoId))
+		var conditionalCheckFailedException *types.ConditionalCheckFailedException
+		if errors.As(err, &conditionalCheckFailedException) {
+			return nil, exceptions.NewBadRequestException("Todo item not found")
 		}
 		log.Printf("Error deleting todo item: %v", err)
 		return nil, err

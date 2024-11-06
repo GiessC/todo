@@ -3,6 +3,7 @@ package todo
 import (
 	"api/exceptions"
 	"api/features/todo/service"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,7 @@ func DeleteTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 		todoItem, err := service.Delete(todoId)
 
 		if err != nil {
-			if _, ok := err.(exceptions.BadRequestException); ok {
+			if errors.As(err, &exceptions.BadRequestException{}) {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"error": err.Error(),
 				})
