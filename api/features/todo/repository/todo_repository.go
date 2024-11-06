@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"api/exceptions"
 	"api/features/todo/domain"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -110,16 +112,22 @@ func (repository *TodoRepository) SetTodoCompleted(todoId string, completed bool
 }
 
 func (repository *TodoRepository) Delete(todoId string) (*domain.Todo, error) {
+	conditionExpression := "attribute_exists(pk) AND attribute_exists(sk)"
 	output, err := repository.db.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: &repository.tableName,
 		Key: map[string]types.AttributeValue{
 			"pk": &types.AttributeValueMemberS{Value: fmt.Sprintf("TODO#%s", todoId)},
 			"sk": &types.AttributeValueMemberS{Value: "TODO"},
 		},
-		ReturnValues: types.ReturnValueAllOld,
+		ConditionExpression: &conditionExpression,
+		ReturnValues:        types.ReturnValueAllOld,
 	})
 
 	if err != nil {
+		var conditionalCheckFailedException *types.ConditionalCheckFailedException
+		if errors.As(err, &conditionalCheckFailedException) {
+			return nil, exceptions.NewBadRequestException("Todo item not found")
+		}
 		log.Printf("Error deleting todo item: %v", err)
 		return nil, err
 	}
