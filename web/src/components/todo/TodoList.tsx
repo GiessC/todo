@@ -6,7 +6,7 @@ import CreateTodoDialog from '../dialog/CreateTodoDialog';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Button } from '../ui/button';
 import TodoItem from '@/domain/TodoItem';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const Fallback = ({
     resetErrorBoundary,
@@ -28,9 +28,31 @@ const TodoList = () => {
         setTodos(data);
     }, [data]);
 
-    const deleteTodo = () => {
-        setTodos((prev) => prev.filter((todo) => todo.todoId !== todo.todoId));
-    };
+    function updateTodo(todoId: string, isCompleted: boolean): void {
+        setTodos((prev) =>
+            prev.map((todo) => {
+                if (todo.todoId === todoId) {
+                    todo.setCompleted(isCompleted);
+                }
+                return todo;
+            }),
+        );
+    }
+
+    function deleteTodo(deletedTodoId: string) {
+        setTodos((prev) =>
+            prev.filter((todo) => todo.todoId !== deletedTodoId),
+        );
+    }
+
+    const sortedTodos = useMemo((): TodoItem[] => {
+        todos.sort((a, b) => {
+            if (a.isCompleted && !b.isCompleted) return 1;
+            if (!a.isCompleted && b.isCompleted) return -1;
+            return a.createdAt.getTime() - b.createdAt.getTime();
+        });
+        return todos;
+    }, [todos]);
 
     return (
         <div className='w-full h-full flex'>
@@ -55,10 +77,11 @@ const TodoList = () => {
                             {isPending ? (
                                 <Loading className='w-12 h-12 text-gray-500 m-auto' />
                             ) : (
-                                todos.map((todo) => (
+                                sortedTodos.map((todo) => (
                                     <Todo
                                         key={todo.todoId}
                                         todo={todo}
+                                        onUpdate={updateTodo}
                                         onDelete={deleteTodo}
                                     />
                                 ))
