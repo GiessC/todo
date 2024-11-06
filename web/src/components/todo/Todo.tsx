@@ -30,7 +30,7 @@ const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
 
     return (
         <div className={`${className} flex justify-between`}>
-            <div className='flex items-center'>
+            <div className='flex items-center min-w-full flex-grow pr-4'>
                 <Checkbox
                     id={todo.todoId}
                     defaultChecked={todo.isCompleted}
@@ -43,7 +43,7 @@ const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
                 />
                 <label
                     htmlFor={todo.todoId}
-                    className={`ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
+                    className={`ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 truncate break-words text-balance  ${
                         todo.isCompleted && 'line-through'
                     }`}
                 >
@@ -51,7 +51,7 @@ const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
                 </label>
             </div>
             <IconButton
-                className='w-4 bg-red-600'
+                className='w-4 bg-red-600 flex-shrink-0'
                 icon={<Trash />}
                 onClick={() =>
                     deleteTodoAsync(todo.todoId, {
