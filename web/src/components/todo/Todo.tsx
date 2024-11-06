@@ -9,19 +9,20 @@ import { toastError } from '@/utils/toastError';
 export interface TodoProps {
     className?: string;
     todo: TodoItem;
+    onUpdate: (todoId: string, isCompleted: boolean) => void;
     onDelete: (todoId: string) => void;
 }
 
-const Todo = ({ className = '', todo, onDelete }: TodoProps) => {
+const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
     const { mutateAsync: deleteTodoAsync } = useDeleteTodo();
     const { mutateAsync: updateTodoAsync } = useUpdateTodo(todo.todoId);
 
     const updateCompleted = async (isCompleted: boolean) => {
         try {
             await updateTodoAsync(isCompleted);
+            onUpdate(todo.todoId, isCompleted);
         } catch (error: unknown) {
             toastError(error, 'Failed to update to-do.');
-            todo.setCompleted(!isCompleted);
         }
     };
 
@@ -32,8 +33,8 @@ const Todo = ({ className = '', todo, onDelete }: TodoProps) => {
                     id={todo.todoId}
                     defaultChecked={todo.isCompleted}
                     onCheckedChange={async (checked: boolean) => {
+                        await updateCompleted(checked);
                         todo.setCompleted(checked);
-                        updateCompleted(checked);
                     }}
                     required
                 />
