@@ -14,8 +14,10 @@ export interface TodoProps {
 }
 
 const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
-    const { mutateAsync: deleteTodoAsync } = useDeleteTodo();
-    const { mutateAsync: updateTodoAsync } = useUpdateTodo(todo.todoId);
+    const { mutateAsync: deleteTodoAsync, isPending: isDeleting } =
+        useDeleteTodo();
+    const { mutateAsync: updateTodoAsync, isPending: isUpdating } =
+        useUpdateTodo(todo.todoId);
 
     const updateCompleted = async (isCompleted: boolean) => {
         try {
@@ -36,6 +38,7 @@ const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
                         await updateCompleted(checked);
                         todo.setCompleted(checked);
                     }}
+                    disabled={isDeleting || isUpdating}
                     required
                 />
                 <label
@@ -64,6 +67,7 @@ const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
                         },
                     })
                 }
+                disabled={isDeleting || isUpdating}
             />
         </div>
     );
