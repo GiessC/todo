@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader } from '../ui/card';
 import CreateTodoDialog from '../dialog/CreateTodoDialog';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Button } from '../ui/button';
+import TodoItem from '@/domain/TodoItem';
+import { useEffect, useState } from 'react';
 
 const Fallback = ({
     resetErrorBoundary,
@@ -18,12 +20,27 @@ const Fallback = ({
 );
 
 const TodoList = () => {
+    const [todos, setTodos] = useState<TodoItem[]>([]);
     const { data, error, isError, isPending, refetch } = useTodoList();
+
+    useEffect(() => {
+        if (!data) return;
+        setTodos(data);
+    }, [data]);
+
+    const deleteTodo = () => {
+        setTodos((prev) => prev.filter((todo) => todo.todoId !== todo.todoId));
+    };
 
     return (
         <div className='w-full h-full flex'>
             <Card className='relative p-4 flex flex-col w-1/5 h-fit m-auto'>
-                <CreateTodoDialog className='absolute top-2 right-2' />
+                <CreateTodoDialog
+                    className='absolute top-2 right-2'
+                    onSuccess={(todo: TodoItem) =>
+                        setTodos((prev) => [...prev, todo])
+                    }
+                />
                 <CardHeader className='flex flex-row justify-between'>
                     <h3 className='scroll-m-20 text-2xl font-semibold tracking-tight'>
                         To-do List
@@ -38,10 +55,11 @@ const TodoList = () => {
                             {isPending ? (
                                 <Loading className='w-12 h-12 text-gray-500 m-auto' />
                             ) : (
-                                data?.map((todo) => (
+                                todos.map((todo) => (
                                     <Todo
                                         key={todo.todoId}
                                         todo={todo}
+                                        onDelete={deleteTodo}
                                     />
                                 ))
                             )}
