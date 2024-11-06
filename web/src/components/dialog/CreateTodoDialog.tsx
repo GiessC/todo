@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import TodoItem from '@/domain/TodoItem';
 
 const formSchema = z.object({
     label: z.string().min(1, { message: 'Please specify a label.' }),
@@ -27,9 +28,13 @@ const DEFAULT_VALUES: CreateTodoValues = {
 
 export interface CreateTodoDialogProps {
     className?: string;
+    onSuccess: (todo: TodoItem) => void;
 }
 
-const CreateTodoDialog = ({ className }: CreateTodoDialogProps) => {
+const CreateTodoDialog = ({
+    className,
+    onSuccess: successCallback,
+}: CreateTodoDialogProps) => {
     const form = useForm<CreateTodoValues>({
         resolver: zodResolver(formSchema),
         defaultValues: DEFAULT_VALUES,
@@ -38,6 +43,11 @@ const CreateTodoDialog = ({ className }: CreateTodoDialogProps) => {
     const { isSubmitting } = formState;
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const formId = 'create-todo';
+
+    function onSuccess(todo: TodoItem): void {
+        successCallback(todo);
+        cleanup();
+    }
 
     function cleanup(isOpen: boolean = false): void {
         form.reset();
@@ -67,7 +77,7 @@ const CreateTodoDialog = ({ className }: CreateTodoDialogProps) => {
                     </DialogHeader>
                     <CreateTodoForm
                         id={formId}
-                        onSuccess={() => cleanup()}
+                        onSuccess={onSuccess}
                     />
                     <DialogFooter>
                         <Button
