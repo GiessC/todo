@@ -98,6 +98,10 @@ func (repository *TodoRepository) SetTodoCompleted(todoId string, completed bool
 	})
 
 	if err != nil {
+		var conditionalCheckFailedException *types.ConditionalCheckFailedException
+		if errors.As(err, &conditionalCheckFailedException) {
+			return nil, exceptions.NewBadRequestException("Todo item not found")
+		}
 		log.Printf("Error updating todo item: %v", err)
 		return nil, err
 	}
