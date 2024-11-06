@@ -100,7 +100,7 @@ func (repository *TodoRepository) SetTodoCompleted(todoId string, completed bool
 	if err != nil {
 		var conditionalCheckFailedException *types.ConditionalCheckFailedException
 		if errors.As(err, &conditionalCheckFailedException) {
-			return nil, exceptions.NewBadRequestException("Todo item not found")
+			return nil, exceptions.NewBadRequestException(fmt.Sprintf("Todo item with id %s not found", todoId))
 		}
 		log.Printf("Error updating todo item: %v", err)
 		return nil, err
@@ -130,7 +130,7 @@ func (repository *TodoRepository) Delete(todoId string) (*domain.Todo, error) {
 	if err != nil {
 		var conditionalCheckFailedException *types.ConditionalCheckFailedException
 		if errors.As(err, &conditionalCheckFailedException) {
-			return nil, exceptions.NewBadRequestException("Todo item not found")
+			return nil, exceptions.NewBadRequestException(fmt.Sprintf("Todo item with id %s not found", todoId))
 		}
 		log.Printf("Error deleting todo item: %v", err)
 		return nil, err
