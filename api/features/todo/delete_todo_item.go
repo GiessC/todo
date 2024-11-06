@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"api/exceptions"
 	"api/features/todo/service"
 	"net/http"
 
@@ -20,6 +21,13 @@ func DeleteTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 		todoItem, err := service.Delete(todoId)
 
 		if err != nil {
+			if _, ok := err.(exceptions.BadRequestException); ok {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": err.Error(),
+				})
+				return
+			}
+
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": "Failed to delete todo item.",
 			})
