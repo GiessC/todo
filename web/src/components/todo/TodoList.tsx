@@ -87,6 +87,13 @@ const TodoList = () => {
                                 ))
                             )}
                             {isError && <div>Error: {error.message}</div>}
+                            {!isPending &&
+                                !isError &&
+                                sortedTodos.length === 0 && (
+                                    <p className='text-center text-gray-500'>
+                                        Your to-do list is empty!
+                                    </p>
+                                )}
                         </ErrorBoundary>
                     </div>
                 </CardContent>
