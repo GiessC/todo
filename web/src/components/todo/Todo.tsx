@@ -9,9 +9,10 @@ import { toastError } from '@/utils/toastError';
 export interface TodoProps {
     className?: string;
     todo: TodoItem;
+    onDelete: (todoId: string) => void;
 }
 
-const Todo = ({ className = '', todo }: TodoProps) => {
+const Todo = ({ className = '', todo, onDelete }: TodoProps) => {
     const { mutateAsync: deleteTodoAsync } = useDeleteTodo();
     const { mutateAsync: updateTodoAsync } = useUpdateTodo(todo.todoId);
 
@@ -49,6 +50,7 @@ const Todo = ({ className = '', todo }: TodoProps) => {
                 onClick={() =>
                     deleteTodoAsync(todo.todoId, {
                         onSuccess: () => {
+                            onDelete(todo.todoId);
                             toast({
                                 title: 'Todo deleted',
                                 description: `Successfully deleted to-do item with label "${todo.label}".`,

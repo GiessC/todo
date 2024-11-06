@@ -28,6 +28,10 @@ const TodoList = () => {
         setTodos(data);
     }, [data]);
 
+    const deleteTodo = () => {
+        setTodos((prev) => prev.filter((todo) => todo.todoId !== todo.todoId));
+    };
+
     return (
         <div className='w-full h-full flex'>
             <Card className='relative p-4 flex flex-col w-1/5 h-fit m-auto'>
@@ -55,6 +59,7 @@ const TodoList = () => {
                                     <Todo
                                         key={todo.todoId}
                                         todo={todo}
+                                        onDelete={deleteTodo}
                                     />
                                 ))
                             )}
