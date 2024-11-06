@@ -40,7 +40,9 @@ const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
                 />
                 <label
                     htmlFor={todo.todoId}
-                    className='ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+                    className={`ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
+                        todo.isCompleted && 'line-through'
+                    }`}
                 >
                     {todo.label}
                 </label>
