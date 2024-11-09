@@ -1,4 +1,4 @@
-import { SIGN_UP_FORM_ID, SignUpValues } from '@/pages/auth/SignUp';
+import { SIGN_UP_FORM_ID, SignUpValues } from '@/pages/auth/sign-up/SignUp';
 import { useNavigate } from 'react-router-dom';
 import {
     Form,

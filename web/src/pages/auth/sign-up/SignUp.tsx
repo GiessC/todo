@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import SignUpForm from '@/components/forms/SignUpForm';
+import SignUpFooterCard from './SignUpFooterCard';
 
 export const SIGN_UP_FORM_ID = 'sign-up-form';
 
@@ -56,23 +57,26 @@ const SignUp = () => {
 
     return (
         <div className='flex h-full w-full'>
-            <Card className='m-auto p-2 w-1/5'>
-                <CardHeader>
-                    <CardTitle>Sign-up</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <SignUpForm form={form} />
-                </CardContent>
-                <CardFooter className='justify-end'>
-                    <Button
-                        form={SIGN_UP_FORM_ID}
-                        type='submit'
-                        disabled={isSubmitting || isLoading}
-                    >
-                        Sign-up
-                    </Button>
-                </CardFooter>
-            </Card>
+            <div className='flex flex-col space-y-6 m-auto w-1/5'>
+                <Card className='p-2'>
+                    <CardHeader>
+                        <CardTitle>Sign-up</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <SignUpForm form={form} />
+                    </CardContent>
+                    <CardFooter className='justify-end'>
+                        <Button
+                            form={SIGN_UP_FORM_ID}
+                            type='submit'
+                            disabled={isSubmitting || isLoading}
+                        >
+                            Sign up
+                        </Button>
+                    </CardFooter>
+                </Card>
+                <SignUpFooterCard />
+            </div>
         </div>
     );
 };

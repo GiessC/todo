@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { Toaster } from './components/ui/toaster.tsx';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import TodoList from './components/todo/TodoList.tsx';
-import SignUp from './pages/auth/SignUp.tsx';
+import SignUp from './pages/auth/sign-up/SignUp.tsx';
 import Pages from './pages/pages.ts';
 import ErrorPage from './pages/error.tsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
