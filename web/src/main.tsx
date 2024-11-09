@@ -20,7 +20,11 @@ const router = createBrowserRouter([
                 <Outlet />
             </Providers>
         ),
-        errorElement: <ErrorPage />,
+        errorElement: (
+            <DefaultLayout>
+                <ErrorPage />
+            </DefaultLayout>
+        ),
         children: [
             {
                 index: true,
