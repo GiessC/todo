@@ -10,6 +10,7 @@ import ErrorPage from './pages/error.tsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
 import SignIn from './pages/auth/sign-in/SignIn.tsx';
 import Providers from './Providers.tsx';
+import DefaultLayout from './components/layouts/DefaultLayout.tsx';
 
 const router = createBrowserRouter([
     {
@@ -31,6 +32,11 @@ const router = createBrowserRouter([
             },
             {
                 path: Pages.Auth,
+                element: (
+                    <DefaultLayout>
+                        <Outlet />
+                    </DefaultLayout>
+                ),
                 children: [
                     {
                         path: Pages.SignIn,

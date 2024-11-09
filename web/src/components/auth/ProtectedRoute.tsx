@@ -3,7 +3,7 @@ import Pages from '@/pages/pages';
 import { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../common/loading/Loading';
-import Layout from '@/layout';
+import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout';
 
 const ProtectedRoute = ({ children }: PropsWithChildren) => {
     const [isAuthenticated, setIsAuthenticated] = useState<
@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children }: PropsWithChildren) => {
         return null;
     }
 
-    return <Layout>{children}</Layout>;
+    return <AuthenticatedLayout>{children}</AuthenticatedLayout>;
 };
 
 export default ProtectedRoute;
