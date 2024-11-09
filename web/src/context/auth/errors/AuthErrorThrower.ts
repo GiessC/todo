@@ -1,4 +1,4 @@
-import { AuthResponse } from '@supabase/supabase-js';
+import { AuthError as SupabaseAuthError } from '@supabase/supabase-js';
 import AuthError from './AuthError';
 import UserAlreadyExistsError from './sign-up/UserAlreadyExists';
 import InvalidCredentialsError from './sign-in/InvalidCredentialsError';
@@ -10,7 +10,9 @@ export default class AuthErrorThrower {
         invalid_credentials: () => new InvalidCredentialsError(),
     };
 
-    static throwErrorIfInvalid(response: AuthResponse): void {
+    static throwErrorIfInvalid(response: {
+        error?: SupabaseAuthError | null;
+    }): void {
         if (!response.error) {
             return;
         }
