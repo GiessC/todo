@@ -4,6 +4,7 @@ import { createContext } from 'react';
 type IAuthContext = {
     session: Promise<Session | null>;
     checkAuthenticated: () => Promise<boolean>;
+    getUser: () => Promise<User>;
     signUp: (
         email: string,
         password: string,
@@ -26,10 +27,14 @@ type IAuthContext = {
           }
         | undefined
     >;
+    signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<IAuthContext>({
     session: Promise.resolve(null),
+    getUser: () => {
+        throw new Error('AuthProvider not found');
+    },
     checkAuthenticated: () => {
         throw new Error('AuthProvider not found');
     },
@@ -37,6 +42,9 @@ const AuthContext = createContext<IAuthContext>({
         throw new Error('AuthProvider not found');
     },
     signIn: () => {
+        throw new Error('AuthProvider not found');
+    },
+    signOut: () => {
         throw new Error('AuthProvider not found');
     },
 });

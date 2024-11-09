@@ -64,6 +64,13 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         return response.data;
     };
 
+    const signOut = async () => {
+        const response = await supabase!.auth.signOut();
+        if (response.error) {
+            AuthErrorThrower.throwErrorIfInvalid(response);
+        }
+    };
+
     const checkAuthenticated = async (): Promise<boolean> => {
         const response = await supabase!.auth.getSession();
         if (response.error || !response.data.session) {
@@ -74,7 +81,14 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
     return (
         <AuthContext.Provider
-            value={{ session, getUser, signIn, signUp, checkAuthenticated }}
+            value={{
+                session,
+                getUser,
+                signIn,
+                signOut,
+                signUp,
+                checkAuthenticated,
+            }}
         >
             {children}
         </AuthContext.Provider>
