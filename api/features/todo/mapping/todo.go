@@ -1,8 +1,8 @@
 package mapping
 
 import (
-	"api/features/todo/domain"
-	"api/features/todo/dto"
+	"api/features/todo/models/domain"
+	"api/features/todo/models/dto"
 )
 
 func ToTodoDto(todo *domain.Todo) *dto.TodoDto {

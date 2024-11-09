@@ -1,10 +1,32 @@
-import { useContext, type PropsWithChildren } from 'react';
+import {
+    useCallback,
+    useContext,
+    type PropsWithChildren,
+    useMemo,
+} from 'react';
 import AuthContext from './AuthContext';
 import SupabaseContext from '../supabase/SupabaseContext';
 import AuthErrorThrower from './errors/AuthErrorThrower';
+import { User } from '@supabase/supabase-js';
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
     const { supabase } = useContext(SupabaseContext);
+
+    const session = useMemo(async () => {
+        const response = await supabase!.auth.getSession();
+        if (response.error) {
+            return null;
+        }
+        return response.data.session;
+    }, [supabase]);
+
+    const getUser = useCallback(async (): Promise<User> => {
+        const response = await supabase!.auth.getUser();
+        if (!response || response.error) {
+            throw new Error('Failed to get user.');
+        }
+        return response.data.user;
+    }, [supabase]);
 
     const signIn = async (
         email: string,
@@ -59,7 +81,14 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
     return (
         <AuthContext.Provider
-            value={{ signIn, signOut, signUp, checkAuthenticated }}
+            value={{
+                session,
+                getUser,
+                signIn,
+                signOut,
+                signUp,
+                checkAuthenticated,
+            }}
         >
             {children}
         </AuthContext.Provider>

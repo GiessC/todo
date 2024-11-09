@@ -33,13 +33,17 @@ export default class TodoService {
         }
     }
 
-    static async create(label: string): Promise<TodoItem> {
+    static async create(
+        label: string,
+        accessToken: string | Promise<string | undefined> | undefined,
+    ): Promise<TodoItem> {
         const request = {
             label,
             isCompleted: false,
         };
         const response = await post<ApiResponse<TodoItemJSON>>(
             '/todo',
+            (await accessToken) ?? undefined,
             request,
         );
         TodoService.throwIfError(
@@ -50,10 +54,13 @@ export default class TodoService {
         return TodoItem.fromJSON(response!.body.item!);
     }
 
-    // TODO: userId is temporary and should be removed once authentication is implemented.
-    static async getTodoList(userId: string = '1'): Promise<TodoItem[]> {
+    static async getTodoList(
+        userId: string,
+        accessToken: string | Promise<string | undefined> | undefined,
+    ): Promise<TodoItem[]> {
         const response = await get<ApiResponse<TodoItemJSON>>(
             `${Endpoints.TODO}/all`,
+            (await accessToken) ?? undefined,
             {
                 userId,
             },
@@ -72,9 +79,11 @@ export default class TodoService {
     static async updateCompleted(
         id: string,
         completed: boolean,
+        accessToken: string | Promise<string | undefined> | undefined,
     ): Promise<TodoItem> {
         const response = await patch<ApiResponse<TodoItemJSON>>(
             `${Endpoints.TODO}/${id}`,
+            (await accessToken) ?? undefined,
             {
                 completed,
             },
@@ -83,9 +92,13 @@ export default class TodoService {
         return TodoItem.fromJSON(response!.body.item!);
     }
 
-    static async deleteTodo(todoId: string): Promise<TodoItem> {
+    static async deleteTodo(
+        todoId: string,
+        accessToken: string | Promise<string | undefined> | undefined,
+    ): Promise<TodoItem> {
         const response = await del<ApiResponse<TodoItemJSON>>(
             `${Endpoints.TODO}/${todoId}`,
+            (await accessToken) ?? undefined,
         );
         TodoService.throwIfError(response, 'Failed to delete to-do item.');
         return TodoItem.fromJSON(response!.body.item!);

@@ -1,8 +1,8 @@
 package service
 
 import (
-	"api/features/todo/dto"
 	"api/features/todo/mapping"
+	"api/features/todo/models/dto"
 	"api/features/todo/repository"
 )
 

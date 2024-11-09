@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"api/features/todo/dto"
+	"api/features/todo/models/dto"
 	"api/features/todo/service"
 	"fmt"
 	"net/http"
