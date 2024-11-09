@@ -25,6 +25,7 @@ type IAuthContext = {
           }
         | undefined
     >;
+    signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<IAuthContext>({
@@ -35,6 +36,9 @@ const AuthContext = createContext<IAuthContext>({
         throw new Error('AuthProvider not found');
     },
     signIn: () => {
+        throw new Error('AuthProvider not found');
+    },
+    signOut: () => {
         throw new Error('AuthProvider not found');
     },
 });
