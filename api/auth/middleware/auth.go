@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -27,35 +28,32 @@ func (m *AuthMiddleware) Handle() gin.HandlerFunc {
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token."})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token is empty."})
 			c.Abort()
 			return
 		}
+		fmt.Printf("tokenString: %v\n", tokenString)
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return m.JwtSecret, nil
+		token, err := jwt.ParseWithClaims(tokenString, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(m.JwtSecret), nil
 		})
 
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token."})
+			fmt.Printf("failed to parse authorization token: %v", err)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Failed to parse authorization token."})
 			c.Abort()
 			return
 		}
 
 		if !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token."})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "The specified authorization token is invalid."})
 			c.Abort()
 			return
 		}
 
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token."})
-			c.Abort()
-			return
-		}
-
-		c.Set("userId", claims["userId"])
 		c.Next()
 	}
 }
