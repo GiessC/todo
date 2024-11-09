@@ -1,5 +1,4 @@
 import { SIGN_UP_FORM_ID, SignUpValues } from '@/pages/auth/SignUp';
-import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useNavigate } from 'react-router-dom';
 import {
     Form,
@@ -14,10 +13,10 @@ import AuthContext from '@/context/auth/AuthContext';
 import Pages from '@/pages/pages';
 import { toastError } from '@/utils/toastError';
 import { useContext, useRef } from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import UserAlreadyExistsError from '@/context/auth/errors/messages/sign-up/UserAlreadyExists';
-
-const SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
+import { FormProvider, UseFormReturn } from 'react-hook-form';
+import UserAlreadyExistsError from '@/context/auth/errors/sign-up/UserAlreadyExists';
+import CaptchaInput from '../common/captcha/CaptchaInput';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export interface SignUpFormProps {
     form: UseFormReturn<SignUpValues>;
@@ -26,8 +25,8 @@ export interface SignUpFormProps {
 const SignUpForm = ({ form }: SignUpFormProps) => {
     const { handleSubmit, setValue, setError } = form;
     const { signUp } = useContext(AuthContext);
-    const captchaRef = useRef<HCaptcha | null>(null);
     const navigate = useNavigate();
+    const captchaRef = useRef<HCaptcha | null>(null);
 
     const submit = async (values: SignUpValues) => {
         try {
@@ -40,16 +39,16 @@ const SignUpForm = ({ form }: SignUpFormProps) => {
         }
     };
 
-    function resetCaptcha() {
-        captchaRef.current?.resetCaptcha();
-        setValue('captchaToken', '');
-    }
-
     function requestCaptchaReverification(reason?: string) {
         const defaultMessage = 'Please re-verify the captcha.';
         setError('captchaToken', {
             message: reason ? `${reason} ${defaultMessage}` : defaultMessage,
         });
+    }
+
+    function resetCaptcha() {
+        captchaRef.current?.resetCaptcha();
+        setValue('captchaToken', '');
     }
 
     function toastErrorToUser(error: unknown) {
@@ -72,92 +71,69 @@ const SignUpForm = ({ form }: SignUpFormProps) => {
         navigate(Pages.TodoList);
     };
 
-    const onVerify = (token: string) => {
-        setError('captchaToken', {
-            message: '',
-        });
-        setCaptchaToken(token);
-    };
-
-    const setCaptchaToken = (token: string) => {
-        setValue('captchaToken', token);
-    };
-
-    const onCaptchaError = () => {
-        resetCaptcha();
-        setError('captchaToken', {
-            message: 'Invalid captcha. Please try again.',
-        });
-    };
-
-    const onCaptchaExpire = () => {
-        resetCaptcha();
-        requestCaptchaReverification('Captcha expired.');
-    };
-
     return (
-        <Form {...form}>
-            <form
-                id={SIGN_UP_FORM_ID}
-                onSubmit={handleSubmit(submit)}
-                className='space-y-8'
-            >
-                <FormField
-                    control={form.control}
-                    name='email'
-                    defaultValue=''
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name='password'
-                    defaultValue=''
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input
-                                    type='password'
-                                    autoComplete='new-password'
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name='captchaToken'
-                    defaultValue=''
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormControl>
-                                <div className='captcha-container'>
-                                    <HCaptcha
+        <FormProvider {...form}>
+            <Form {...form}>
+                <form
+                    id={SIGN_UP_FORM_ID}
+                    onSubmit={handleSubmit(submit)}
+                    className='space-y-8'
+                >
+                    <FormField
+                        control={form.control}
+                        name='email'
+                        defaultValue=''
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name='password'
+                        defaultValue=''
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type='password'
+                                        autoComplete='new-password'
                                         {...field}
-                                        sitekey={SITE_KEY}
-                                        onVerify={onVerify}
-                                        onError={onCaptchaError}
-                                        onExpire={onCaptchaExpire}
-                                        ref={captchaRef}
                                     />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-            </form>
-        </Form>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name='captchaToken'
+                        defaultValue=''
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <CaptchaInput
+                                        {...field}
+                                        ref={captchaRef}
+                                        resetCaptcha={resetCaptcha}
+                                        requestCaptchaReverification={
+                                            requestCaptchaReverification
+                                        }
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </form>
+            </Form>
+        </FormProvider>
     );
 };
 
