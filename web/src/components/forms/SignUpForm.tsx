@@ -113,6 +113,24 @@ const SignUpForm = ({ form }: SignUpFormProps) => {
                     />
                     <FormField
                         control={form.control}
+                        name='confirmPassword'
+                        defaultValue=''
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type='password'
+                                        autoComplete='new-password'
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name='captchaToken'
                         defaultValue=''
                         render={({ field }) => (

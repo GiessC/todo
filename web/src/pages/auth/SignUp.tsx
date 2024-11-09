@@ -14,26 +14,37 @@ import SignUpForm from '@/components/forms/SignUpForm';
 
 export const SIGN_UP_FORM_ID = 'sign-up-form';
 
-const formSchema = z.object({
-    email: z
-        .string()
-        .min(1, {
-            message: 'Please specify an email address.',
-        })
-        .email({ message: 'Please specify a valid email.' })
-        .default(''),
-    password: z
-        .string()
-        .min(6, { message: 'Password must be at least 6 characters.' })
-        .default(''),
-    captchaToken: z
-        .string()
-        .min(1, {
-            message: 'Please verify the captcha.',
-        })
-        .optional()
-        .default(''),
-});
+const formSchema = z
+    .object({
+        email: z
+            .string()
+            .min(1, {
+                message: 'Please specify an email address.',
+            })
+            .email({ message: 'Please specify a valid email.' })
+            .default(''),
+        password: z
+            .string()
+            .min(6, { message: 'Password must be at least 6 characters.' })
+            .default(''),
+        confirmPassword: z.string().default(''),
+        captchaToken: z
+            .string()
+            .min(1, {
+                message: 'Please verify the captcha.',
+            })
+            .optional()
+            .default(''),
+    })
+    .refine(
+        (data) => {
+            return data.password === data.confirmPassword;
+        },
+        {
+            message: 'Passwords do not match.',
+            path: ['confirmPassword'],
+        },
+    );
 export type SignUpValues = z.infer<typeof formSchema>;
 
 const SignUp = () => {
