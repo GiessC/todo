@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"api/auth/utils"
 	"api/features/todo/models/dto"
 	"api/features/todo/service"
 	"fmt"
@@ -21,7 +22,9 @@ func CreateTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 			return
 		}
 
-		todoItem, err := service.Save(reqBody)
+		userId := utils.CurrentUser(c).UserId
+
+		todoItem, err := service.Save(userId, reqBody)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{

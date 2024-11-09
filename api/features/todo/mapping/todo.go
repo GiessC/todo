@@ -9,6 +9,6 @@ func ToTodoDto(todo *domain.Todo) *dto.TodoDto {
 	return dto.NewTodoDto(todo.Label, todo.IsCompleted, dto.WithTodoId(todo.TodoId), dto.WithCreatedAt(todo.CreatedAt))
 }
 
-func CreateTodoDtoToDomain(createDto *dto.CreateTodoDto) *domain.Todo {
-	return domain.NewTodo(createDto.Label, createDto.IsCompleted)
+func CreateTodoDtoToDomain(userId string, createDto *dto.CreateTodoDto) *domain.Todo {
+	return domain.NewTodo(userId, createDto.Label, createDto.IsCompleted)
 }

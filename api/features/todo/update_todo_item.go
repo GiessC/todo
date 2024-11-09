@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"api/auth/utils"
 	"api/exceptions"
 	"api/features/todo/models/dto"
 	"api/features/todo/service"
@@ -23,7 +24,8 @@ func UpdateTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 			return
 		}
 
-		todoItem, err := service.SetTodoCompleted(todoId, reqBody.Completed)
+		userId := utils.CurrentUser(c).UserId
+		todoItem, err := service.SetTodoCompleted(userId, todoId, reqBody.Completed)
 
 		if err != nil {
 			if errors.As(err, &exceptions.BadRequestException{}) {

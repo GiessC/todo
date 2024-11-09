@@ -16,8 +16,8 @@ func NewTodoService(repository *repository.TodoRepository) *TodoService {
 	}
 }
 
-func (service *TodoService) Save(createTodoDto dto.CreateTodoDto) (*dto.TodoDto, error) {
-	todo, err := service.repository.Save(mapping.CreateTodoDtoToDomain(&createTodoDto))
+func (service *TodoService) Save(userId string, createTodoDto dto.CreateTodoDto) (*dto.TodoDto, error) {
+	todo, err := service.repository.Save(mapping.CreateTodoDtoToDomain(userId, &createTodoDto))
 	if err != nil {
 		return nil, err
 	}
@@ -43,16 +43,16 @@ func (service *TodoService) FindAllByUser(userId string) ([]dto.TodoDto, error) 
 	return todoDtoList, nil
 }
 
-func (service *TodoService) SetTodoCompleted(todoId string, completed bool) (*dto.TodoDto, error) {
-	todo, err := service.repository.SetTodoCompleted(todoId, completed)
+func (service *TodoService) SetTodoCompleted(userId string, todoId string, completed bool) (*dto.TodoDto, error) {
+	todo, err := service.repository.SetTodoCompleted(userId, todoId, completed)
 	if err != nil {
 		return nil, err
 	}
 	return mapping.ToTodoDto(todo), nil
 }
 
-func (service *TodoService) Delete(todoId string) (*dto.TodoDto, error) {
-	todo, err := service.repository.Delete(todoId)
+func (service *TodoService) Delete(userId string, todoId string) (*dto.TodoDto, error) {
+	todo, err := service.repository.Delete(userId, todoId)
 	if err != nil {
 		return nil, err
 	}

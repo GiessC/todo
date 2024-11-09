@@ -35,13 +35,12 @@ func WithCreatedAt(createdAt string) TodoOption {
 	}
 }
 
-func NewTodo(label string, isCompleted bool, options ...TodoOption) *Todo {
+func NewTodo(userId string, label string, isCompleted bool, options ...TodoOption) *Todo {
 	todoId := uuid.NewString()
 	createdAt := util.CurrentIsoString()
-	userId := "1"
 	todoItem := &Todo{
-		Pk:          GetPk(todoId),
-		Sk:          getSk(),
+		Pk:          GetPk(userId, todoId),
+		Sk:          GetSk(userId),
 		Gsi1pk:      GetGsi1Pk(userId, isCompleted),
 		Gsi1sk:      GetGsi1Sk(createdAt, todoId),
 		TodoId:      todoId,
@@ -56,12 +55,12 @@ func NewTodo(label string, isCompleted bool, options ...TodoOption) *Todo {
 	return todoItem
 }
 
-func GetPk(todoId string) string {
-	return fmt.Sprintf("TODO#%s", todoId)
+func GetPk(userId string, todoId string) string {
+	return fmt.Sprintf("USER#%sTODO#%s", userId, todoId)
 }
 
-func getSk() string {
-	return "TODO"
+func GetSk(userId string) string {
+	return fmt.Sprintf("USER#%s#TODO", userId)
 }
 
 func GetGsi1Pk(userId string, isCompleted bool) string {

@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"api/auth/utils"
 	"api/exceptions"
 	"api/features/todo/service"
 	"errors"
@@ -19,7 +20,8 @@ func DeleteTodoItemHandler(service *service.TodoService) gin.HandlerFunc {
 			return
 		}
 
-		todoItem, err := service.Delete(todoId)
+		userId := utils.CurrentUser(c).UserId
+		todoItem, err := service.Delete(userId, todoId)
 
 		if err != nil {
 			if errors.As(err, &exceptions.BadRequestException{}) {

@@ -80,14 +80,14 @@ func (repository *TodoRepository) FindAllByUserAndCompleted(userId string, isCom
 	return todoItems, nil
 }
 
-func (repository *TodoRepository) SetTodoCompleted(todoId string, completed bool) (*domain.Todo, error) {
+func (repository *TodoRepository) SetTodoCompleted(userId string, todoId string, completed bool) (*domain.Todo, error) {
 	updateExpression := "SET isCompleted = :isCompleted"
 	conditionExpression := "attribute_exists(pk) AND attribute_exists(sk)"
 	output, err := repository.db.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: &repository.tableName,
 		Key: map[string]types.AttributeValue{
-			"pk": &types.AttributeValueMemberS{Value: fmt.Sprintf("TODO#%s", todoId)},
-			"sk": &types.AttributeValueMemberS{Value: "TODO"},
+			"pk": &types.AttributeValueMemberS{Value: domain.GetPk(userId, todoId)},
+			"sk": &types.AttributeValueMemberS{Value: domain.GetSk(userId)},
 		},
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":isCompleted": &types.AttributeValueMemberBOOL{Value: completed},
@@ -115,13 +115,13 @@ func (repository *TodoRepository) SetTodoCompleted(todoId string, completed bool
 	return todo, nil
 }
 
-func (repository *TodoRepository) Delete(todoId string) (*domain.Todo, error) {
+func (repository *TodoRepository) Delete(userId string, todoId string) (*domain.Todo, error) {
 	conditionExpression := "attribute_exists(pk) AND attribute_exists(sk)"
 	output, err := repository.db.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: &repository.tableName,
 		Key: map[string]types.AttributeValue{
-			"pk": &types.AttributeValueMemberS{Value: fmt.Sprintf("TODO#%s", todoId)},
-			"sk": &types.AttributeValueMemberS{Value: "TODO"},
+			"pk": &types.AttributeValueMemberS{Value: domain.GetPk(userId, todoId)},
+			"sk": &types.AttributeValueMemberS{Value: domain.GetSk(userId)},
 		},
 		ConditionExpression: &conditionExpression,
 		ReturnValues:        types.ReturnValueAllOld,
