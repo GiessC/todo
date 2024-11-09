@@ -1,4 +1,4 @@
-import SupabaseContext from '@/context/supabase/SupabaseContext';
+import AuthContext from '@/context/auth/AuthContext';
 import Pages from '@/pages/pages';
 import { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }: PropsWithChildren) => {
     const [isAuthenticated, setIsAuthenticated] = useState<
         boolean | undefined
     >();
-    const { checkAuthenticated } = useContext(SupabaseContext);
+    const { checkAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {

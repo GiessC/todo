@@ -1,28 +1,12 @@
-import { Session, User } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { createContext } from 'react';
 
-type ISupabaseContext = {
-    checkAuthenticated: () => Promise<boolean>;
-    signUp: (
-        email: string,
-        password: string,
-        captchaToken: string,
-    ) => Promise<
-        | {
-              user: User | null;
-              session: Session | null;
-          }
-        | undefined
-    >;
-};
+export interface ISupabaseContext {
+    supabase: SupabaseClient | undefined;
+}
 
 const SupabaseContext = createContext<ISupabaseContext>({
-    checkAuthenticated: () => {
-        throw new Error('SupabaseProvider not found');
-    },
-    signUp: () => {
-        throw new Error('SupabaseProvider not found');
-    },
+    supabase: undefined,
 });
 
 export default SupabaseContext;
