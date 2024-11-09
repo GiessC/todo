@@ -14,14 +14,28 @@ type IAuthContext = {
           }
         | undefined
     >;
+    signIn: (
+        email: string,
+        password: string,
+        captchaToken: string,
+    ) => Promise<
+        | {
+              user: User | null;
+              session: Session | null;
+          }
+        | undefined
+    >;
 };
 
 const AuthContext = createContext<IAuthContext>({
     checkAuthenticated: () => {
-        throw new Error('SupabaseProvider not found');
+        throw new Error('AuthProvider not found');
     },
     signUp: () => {
-        throw new Error('SupabaseProvider not found');
+        throw new Error('AuthProvider not found');
+    },
+    signIn: () => {
+        throw new Error('AuthProvider not found');
     },
 });
 

@@ -1,11 +1,13 @@
 import { AuthResponse } from '@supabase/supabase-js';
-import AuthError from './messages/AuthError';
-import UserAlreadyExistsError from './messages/sign-up/UserAlreadyExists';
+import AuthError from './AuthError';
+import UserAlreadyExistsError from './sign-up/UserAlreadyExists';
+import InvalidCredentialsError from './sign-in/InvalidCredentialsError';
 
 export default class AuthErrorThrower {
     // based on supabase's error codes
     private static errorFactoryByCode: Record<string, () => AuthError> = {
         user_already_exists: () => new UserAlreadyExistsError(),
+        invalid_credentials: () => new InvalidCredentialsError(),
     };
 
     static throwErrorIfInvalid(response: AuthResponse): void {

@@ -6,6 +6,24 @@ import AuthErrorThrower from './errors/AuthErrorThrower';
 const AuthProvider = ({ children }: PropsWithChildren) => {
     const { supabase } = useContext(SupabaseContext);
 
+    const signIn = async (
+        email: string,
+        password: string,
+        captchaToken: string,
+    ) => {
+        const response = await supabase!.auth.signInWithPassword({
+            email,
+            password,
+            options: {
+                captchaToken,
+            },
+        });
+        if (!response || response.error) {
+            AuthErrorThrower.throwErrorIfInvalid(response);
+        }
+        return response.data;
+    };
+
     const signUp = async (
         email: string,
         password: string,
@@ -33,7 +51,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     };
 
     return (
-        <AuthContext.Provider value={{ signUp, checkAuthenticated }}>
+        <AuthContext.Provider value={{ signIn, signUp, checkAuthenticated }}>
             {children}
         </AuthContext.Provider>
     );
