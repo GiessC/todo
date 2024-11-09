@@ -2,7 +2,7 @@ package todo
 
 import (
 	"api/exceptions"
-	"api/features/todo/dto"
+	"api/features/todo/models/dto"
 	"api/features/todo/service"
 	"errors"
 	"net/http"

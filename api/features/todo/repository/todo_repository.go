@@ -2,7 +2,7 @@ package repository
 
 import (
 	"api/exceptions"
-	"api/features/todo/domain"
+	"api/features/todo/models/domain"
 	"context"
 	"errors"
 	"fmt"
