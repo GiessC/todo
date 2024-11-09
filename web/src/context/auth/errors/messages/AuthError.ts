@@ -1,15 +1,7 @@
 import BaseError from '@/errors/BaseError';
 
-export interface IAuthError {
-    getMessage(): string;
-}
-
-export default class AuthError extends BaseError implements IAuthError {
+export default class AuthError extends BaseError {
     constructor(message: string) {
         super(message);
-    }
-
-    getMessage(): string {
-        return this.message;
     }
 }

@@ -18,12 +18,4 @@ export default class AuthErrorThrower {
         }
         throw this.errorFactoryByCode[code]();
     }
-
-    public static registerErrorForCode(
-        code: string,
-        errorFactory: () => AuthError,
-    ): void {
-        console.debug('Registering error for code:', code);
-        this.errorFactoryByCode[code] = errorFactory;
-    }
 }
