@@ -2,6 +2,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { createContext } from 'react';
 
 type IAuthContext = {
+    session: Promise<Session | null>;
     checkAuthenticated: () => Promise<boolean>;
     signUp: (
         email: string,
@@ -28,6 +29,7 @@ type IAuthContext = {
 };
 
 const AuthContext = createContext<IAuthContext>({
+    session: Promise.resolve(null),
     checkAuthenticated: () => {
         throw new Error('AuthProvider not found');
     },
