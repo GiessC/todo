@@ -9,6 +9,7 @@ import Pages from './pages/pages.ts';
 import Providers from './Providers.tsx';
 import ErrorPage from './pages/error.tsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.tsx';
+import SignIn from './pages/auth/sign-in/SignIn.tsx';
 
 const router = createBrowserRouter([
     {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: Pages.Auth,
                 children: [
+                    {
+                        path: Pages.SignIn,
+                        element: <SignIn />,
+                    },
                     {
                         path: Pages.SignUp,
                         element: <SignUp />,
