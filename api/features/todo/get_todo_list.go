@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"api/auth/utils"
 	"api/features/todo/service"
 	"log"
 	"net/http"
@@ -10,14 +11,7 @@ import (
 
 func GetTodoListHandler(service *service.TodoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userId := c.Query("userId")
-
-		if userId == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "User ID is required.",
-			})
-			return
-		}
+		userId := utils.CurrentUser(c).UserId
 
 		todoList, err := service.FindAllByUser(userId)
 		log.Printf("Todo list: %+v", todoList)
