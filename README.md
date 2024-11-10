@@ -1,4 +1,4 @@
-# Todo
+# ✅ Todo
 
 A to-do app built with Supabase authentication in a Vite + React frontend backed by a serverless Go + Gin API deployed using API Gateway + Lambda. The web app is deployed via CloudFront + S3.
 
@@ -6,7 +6,7 @@ The website can be found here: [https://todo.giess.xyz/](https://todo.giess.xyz/
 
 > The app is meant for demo purposes. Any items in your to-do list will be automatically deleted a month after their creation.
 
-## Technologies Used
+## 🖥️ Technologies Used
 
 ### General
 
