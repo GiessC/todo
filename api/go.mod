@@ -2,24 +2,26 @@ module api
 
 go 1.22.2
 
-require github.com/aws/aws-sdk-go-v2/config v1.28.1
-
 require (
-	github.com/aws/aws-sdk-go v1.48.10 // indirect
-	github.com/caarlos0/env/v11 v11.2.2 // indirect
-	github.com/gin-contrib/cors v1.7.2 // indirect
-	github.com/google/uuid v1.6.0 // indirect
+	github.com/aws/aws-lambda-go v1.47.0
+	github.com/aws/aws-sdk-go-v2/config v1.28.1
+	github.com/awslabs/aws-lambda-go-api-proxy v0.16.2
+	github.com/caarlos0/env/v11 v11.2.2
+	github.com/gin-contrib/cors v1.7.2
+	github.com/google/uuid v1.6.0
 )
+
+require github.com/aws/aws-sdk-go v1.48.10 // indirect
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.32.3 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.42 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.14.11 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.14.11
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.18 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.22 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.22 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.34.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.34.5
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.22.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.17 // indirect
@@ -35,7 +37,7 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.10.0 // indirect
+	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.1 // indirect

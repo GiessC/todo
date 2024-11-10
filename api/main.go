@@ -9,15 +9,21 @@ import (
 	"api/util/routes"
 	"context"
 	"log"
-	"time"
 
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+var ginLambda *ginadapter.GinLambda
+
+func init() {
+	log.Printf("Initializing API")
+
 	appConfig := app.GetConfigInstance()
 
 	db := loadDynamoDb()
@@ -26,16 +32,15 @@ func main() {
 	service := service.NewTodoService(repository)
 
 	router := gin.Default()
-	router.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
-		AllowHeaders:    []string{"Origin"},
-		MaxAge:          12 * time.Hour,
-	}))
+	router.Use(cors.Default())
 
 	createMiddlewareOn(router)
 	configureTodoRoutesOn(router, service)
 
+	if appConfig.ShouldRunInLambda {
+		ginLambda = ginadapter.New(router)
+		return
+	}
 	router.Run(":8080")
 }
 
@@ -64,4 +69,12 @@ func configureTodoRoutesOn(router *gin.Engine, service *service.TodoService) {
 	router.GET(routes.Todos, todo.GetTodoListHandler(service))
 	router.PATCH(routes.TodoItem, todo.UpdateTodoItemHandler(service))
 	router.DELETE(routes.TodoItem, todo.DeleteTodoItemHandler(service))
+}
+
+func LambdaHandler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	return ginLambda.ProxyWithContext(ctx, req)
+}
+
+func main() {
+	lambda.Start(LambdaHandler)
 }

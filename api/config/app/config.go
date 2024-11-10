@@ -12,6 +12,7 @@ type Config struct {
 	TodoTableName     string `env:"TODO__DYNAMODB_TODO_TABLE_NAME"`
 	TodoGsi1IndexName string `env:"TODO__DYNAMODB_TODO_GSI1_INDEX_NAME"`
 	JwtSecret         string `env:"TODO__JWT_SECRET"`
+	ShouldRunInLambda bool   `env:"TODO__RUN_IN_LAMBDA" envDefault:"false"`
 }
 
 var config Config
