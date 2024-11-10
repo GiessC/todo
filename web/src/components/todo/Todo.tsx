@@ -32,6 +32,7 @@ const Todo = ({ className = '', todo, onUpdate, onDelete }: TodoProps) => {
         <div className={`${className} flex justify-between`}>
             <div className='flex items-center min-w-full flex-grow pr-4'>
                 <Checkbox
+                    className='size-5 md:size-4'
                     id={todo.todoId}
                     defaultChecked={todo.isCompleted}
                     onCheckedChange={async (checked: boolean) => {
